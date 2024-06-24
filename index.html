@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول التطعيمات - العاشر من رمضان</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #0066cc;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004499;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+        }
+        th {
+            background-color: #0066cc;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>جدول التطعيمات - العاشر من رمضان</h1>
+        <div>
+            <select id="ageGroup">
+                <option value="">اختر الفئة العمرية</option>
+                <option value="0-9">0-9 أشهر</option>
+                <option value="12-18">سنة - سنة ونصف</option>
+                <option value="TB">تطعيم الدرن</option>
+            </select>
+            <select id="day">
+                <option value="">اختر اليوم</option>
+                <option value="السبت">السبت</option>
+                <option value="الأحد">الأحد</option>
+                <option value="الاثنين">الاثنين</option>
+                <option value="الثلاثاء">الثلاثاء</option>
+                <option value="الأربعاء">الأربعاء</option>
+                <option value="الخميس">الخميس</option>
+            </select>
+            <select id="center">
+                <option value="">اختر المركز الطبي</option>
+                <option value="مركز طبي أول">مركز طبي أول</option>
+                <option value="مركز طبي 40">مركز طبي 40</option>
+                <option value="مركز 54">مركز 54</option>
+                <option value="مركز طبي 28">مركز طبي 28</option>
+                <option value="مركز طبي 12">مركز طبي 12</option>
+                <option value="مركز طبي 46">مركز طبي 46</option>
+                <option value="مركز طبي الحي 10 ج">مركز طبي الحي 10 ج</option>
+                <option value="مركز طبي الحي 10 أ">مركز طبي الحي 10 أ</option>
+                <option value="مركز طبي الحي 12">مركز طبي الحي 12</option>
+                <option value="مركز طبي الحي 16 القديم">مركز طبي الحي 16 القديم</option>
+                <option value="مركز طبي الحي 16 الجديد">مركز طبي الحي 16 الجديد</option>
+                <option value="الحي 15 الجديد">الحي 15 الجديد</option>
+                <option value="الحي 15 القديم">الحي 15 القديم</option>
+                <option value="وحدة الحي 14">وحدة الحي 14</option>
+                <option value="مركز طبي حي 30">مركز طبي حي 30</option>
+                <option value="مركز طبي الحي 31">مركز طبي الحي 31</option>
+                <option value="مركز طبي الحي 11">مركز طبي الحي 11</option>
+            </select>
+            <button onclick="search()">بحث</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const vaccinationData = {
+            "مركز طبي أول": {
+                "0-9": ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الأحد", "الاثنين", "الأربعاء"],
+                "TB": ["السبت", "الثلاثاء"],
+                "location": "https://maps.app.goo.gl/gbWNY8Y1vnFjLmFe9?g_st=ac"
+            },
+            "مركز طبي 40": {
+                "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الاثنين", "الثلاثاء"],
+                "TB": ["الثلاثاء"],
+                "location": "https://maps.app.goo.gl/Axx6rX29PjLRTdi4A?g_st=ac"
+            },
+            "مركز 54": {
+                "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الاثنين", "الثلاثاء"],
+                "TB": ["الثلاثاء"],
+                "location": "https://maps.app.goo.gl/xp6dLtuEPkFkwKUi8?g_st=ac"
+            },
+            "مركز طبي 28": {
+                "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الثلاثاء", "الأربعاء"],
+                "TB": ["الثلاثاء الأول والثالث في الشهر"],
+                "location": "https://maps.app.goo.gl/nmnWBafKDx73SLxp7?g_st=ac"
+            },
+            "مركز طبي 12": {
+                "0-9": ["السبت", "الأحد", "الاثنين", "الثلاثاء"],
+                "12-18": ["السبت", "الثلاثاء"],
+                "TB": ["السبت", "الثلاثاء"],
+                "location": "https://maps.app.goo.gl/2aogmuy7mVpMNcVy7?g_st=ac"
+            },
+            "مركز طبي 46": {
+                "0-9": ["الأحد", "الاثنين", "الثلاثاء"],
+                "12-18": ["الأحد", "الاثنين"],
+                "TB": ["الثلاثاء الثاني والرابع في الشهر"],
+                "location": "https://maps.app.goo.gl/U2Q7gBpXjHmHrBoV7?g_st=ac"
+            },
+            "مركز طبي الحي 10 ج": {
+                "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الاثنين", "الثلاثاء"],
+                "TB": ["الثلاثاء الثاني والرابع في الشهر"],
+                "location": "https://maps.app.goo.gl/RuGcb83oehcFtGEP6?g_st=ac"
+            },
+            "مركز طبي الحي 10 أ": {
+                "0-9": ["الأحد"],
+                "12-18": ["الأحد"],
+                "location": "https://maps.app.goo.gl/GaSU1m3kauorS7Ht8?g_st=ac"
+            },
+            "مركز طبي الحي 12": {
+                "0-9": ["الثلاثاء", "الأربعاء", "الخميس"],
+                "12-18": ["الأربعاء", "الخميس"],
+                "TB": ["الأربعاء الأول والثالث"],
+                "location": "https://maps.app.goo.gl/ZLxcoYvkjfdRvUfF6?g_st=ac"
+            },
+            "مركز طبي الحي 16 القديم": {
+                "0-9": ["الاثنين"],
+                "12-18": ["الاثنين", "الثلاثاء"],
+                "location": "https://maps.app.goo.gl/pn94SzwdwHVCUxWv6"
+            },
+            "مركز طبي الحي 16 الجديد": {
+                "0-9": ["السبت"],
+                "12-18": ["السبت"],
+                "location": "https://maps.app.goo.gl/E7PyS9qUfRKq4HA36"
+            },
+            "الحي 15 الجديد": {
+                "0-9": ["الأحد", "الاثنين"],
+                "12-18": ["الأحد"],
+                "TB": ["الأحد الثالث في الشهر"],
+                "location": "https://maps.app.goo.gl/qe2a6XZUTu94RvC87"
+            },
+            "الحي 15 القديم": {
+                "0-9": ["الثلاثاء"],
+                "12-18": ["الثلاثاء"],
+                "TB": ["الثلاثاء الأخير في الشهر"],
+                "location": ""
+            },
+            "وحدة الحي 14": {
+                "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
+                "12-18": ["الثلاثاء", "الأربعاء"],
+                "TB": ["الثلاثاء الأول والثالث في الشهر"],
+                "location": "https://maps.app.goo.gl/WWyoJx5Et9Qs2tkV7?g_st=ac"
+            },
+            "مركز طبي حي 30": {
+                "0-9": ["السبت"],
+                "12-18": ["السبت"],
+                "location": "https://maps.app.goo.gl/N7A26HwuNyHa1UtTA"
+            },
+            "مركز طبي الحي 31": {
+                "0-9": ["الثلاثاء"],
+                "12-18": ["الثلاثاء"],
+                "location": ""
+            },
+            "مركز طبي الحي 11": {
+                "0-9": ["الخميس"],
+                "12-18": ["الخميس"],
+                "TB": ["الخميس الثاني في الشهر"],
+                "location": ""
+            }
+        };
+
+        function search() {
+            const ageGroup = document.getElementById('ageGroup').value;
+            const day = document.getElementById('day').value;
+            const center = document.getElementById('center').value;
+            let resultHTML = '';
+
+            if (!ageGroup && !day && !center) {
+                resultHTML = '<p>الرجاء اختيار معيار واحد على الأقل للبحث</p>';
+            } else {
+                let results = [];
+
+                for (let c in vaccinationData) {
+                    if (center && c !== center) continue;
+                    
+                    for (let ag in vaccinationData[c]) {
+                        if (ag === 'location') continue;
+                        if (ageGroup && ag !== ageGroup) continue;
+                        
+                        if (!day || vaccinationData[c][ag].includes(day)) {
+                            results.push({
+                                center: c,
+                                ageGroup: ag,
+                                days: day ? [day] : vaccinationData[c][ag],
+                                location: vaccinationData[c].location
+                            });
+                        }
+                    }
+                }
+
+                if (results.length > 0) {
+                    resultHTML = '<table><tr><th>المركز الطبي</th><th>الفئة العمرية</th><th>الأيام المتاحة</th><th>الموقع</th></tr>';
+                    results.forEach(r => {
+                        resultHTML += `<tr><td>${r.center}</td><td>${r.ageGroup}</td><td>${r.days.join(', ')}</td><td>${r.location ? `<a href="${r.location}" target="_blank">رابط الموقع</a>` : 'غير متوفر'}</td></tr>`;
+                    });
+                    resultHTML += '</table>';
+                } else {
+                    resultHTML = '<p>لا توجد نتائج مطابقة للبحث</p>';
+                }
+            }
+
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+    </script>
+</body>
+    </html>
