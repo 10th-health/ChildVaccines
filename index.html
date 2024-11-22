@@ -3,17 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول التطعيمات - العاشر من رمضان</title>
+    <title>جدول التطعيمات والمعلومات الإضافية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            margin: 0;
+            font-family: 'Tajawal', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            text-align: center;
+            direction: rtl;
+            text-align: right;
+            background-color: #f9f9f9;
         }
         h1 {
-            color: #0066cc;
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .tab-container button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-family: inherit;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+        }
+        .tab-container button.active {
+            background-color: #0056b3;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        select {
+            padding: 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .vaccination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .vaccine-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .vaccine-card h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .notes-section {
+            margin-top: 30px;
+        }
+        .notes-section h2 {
+            color: #333;
+        }
+        .notes-section ul {
+            padding-right: 20px;
+        }
+        .info-card {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-card h2 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        ul {
+            padding-right: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .important-note {
+            background-color: #ffe0e0;
+            border: 1px solid #ffb3b3;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+        .important-note h3 {
+            color: #cc0000;
+            margin-top: 0;
         }
         .container {
             background-color: white;
@@ -22,26 +136,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             max-width: 800px;
             margin: 0 auto;
-        }
-        select, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #0066cc;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #004499;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
         }
         table {
             width: 100%;
@@ -67,55 +161,225 @@
         a:hover {
             text-decoration: underline;
         }
+        .important {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .tab-content#vaccinationTable {
+            background-color: #e6f7ff;
+        }
+        .tab-content#missedVaccination {
+            background-color: #f0f8ff;
+        }
+        .tab-content#vaccinationCenters {
+            background-color: #e6ffe6;
+        }
+        .tab-content#vaccinationProhibitions {
+            background-color: #fff0f5;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>جدول التطعيمات - العاشر من رمضان</h1>
-        <p>الرجاء اختيار معيار واحد على الأقل للبحث</p>
-        <div>
-            <select id="ageGroup">
-                <option value="">اختر الفئة العمرية</option>
-                <option value="0-9"> من عمر يوم حتي 9 اشهر</option>
-                <option value="12-18">سنة - سنة ونصف</option>
-                <option value="TB">تطعيم الدرن</option>
-            </select>
-            <select id="day">
-                <option value="">اختر اليوم</option>
-                <option value="السبت">السبت</option>
-                <option value="الأحد">الأحد</option>
-                <option value="الاثنين">الاثنين</option>
-                <option value="الثلاثاء">الثلاثاء</option>
-                <option value="الأربعاء">الأربعاء</option>
-                <option value="الخميس">الخميس</option>
-            </select>
-            <select id="center">
-                <option value="">اختر المركز الطبي</option>
-                <option value="مركز طبي أول">مركز طبي أول</option>
-                <option value="مركز طبي 40">مركز طبي 40</option>
-                <option value="مركز 54">مركز 54</option>
-                <option value="مركز طبي 28">مركز طبي 28</option>
-                <option value="مركز طبي 12">مركز طبي 12</option>
-                <option value="مركز طبي 46">مركز طبي 46</option>
-                <option value="مركز طبي الحي 10 ج">مركز طبي الحي 10 ج</option>
-                <option value="مركز طبي الحي 10 أ">مركز طبي الحي 10 أ</option>
-                <option value="مركز طبي الحي 12">مركز طبي الحي 12</option>
-                <option value="مركز طبي الحي 16 القديم">مركز طبي الحي 16 القديم</option>
-                <option value="مركز طبي الحي 16 الجديد">مركز طبي الحي 16 الجديد</option>
-                <option value="الحي 15 الجديد">الحي 15 الجديد</option>
-                <option value="الحي 15 القديم">الحي 15 القديم</option>
-                <option value="وحدة الحي 14">وحدة الحي 14</option>
-                <option value="مركز طبي حي 30">مركز طبي حي 30</option>
-                <option value="مركز طبي الحي 31">مركز طبي الحي 31</option>
-                <option value="مركز طبي الحي 11">مركز طبي الحي 11</option>
-            </select>
-            <button onclick="search()">بحث</button>
+    <h1>جدول التطعيمات والمعلومات الإضافية</h1>
+    
+    <div class="tab-container">
+        <button class="tab-button active" onclick="openTab(event, 'vaccinationCenters')">مراكز التطعيمات</button>
+        <button class="tab-button" onclick="openTab(event, 'vaccinationTable')">جدول التطعيمات</button>
+        <button class="tab-button" onclick="openTab(event, 'missedVaccination')">الإجراءات عند التخلف عن التطعيم</button>
+        <button class="tab-button" onclick="openTab(event, 'vaccinationProhibitions')">موانع التطعيم</button>
+    </div>
+
+    <div id="vaccinationCenters" class="tab-content active">
+        <div class="container">
+            <h1>جدول التطعيمات - العاشر من رمضان</h1>
+            <p>الرجاء اختيار معيار واحد على الأقل للبحث</p>
+            <div>
+                <select id="ageGroup">
+                    <option value="">اختر الفئة العمرية</option>
+                    <option value="0-9"> من عمر يوم حتي 9 اشهر</option>
+                    <option value="12-18">سنة - سنة ونصف</option>
+                    <option value="TB">تطعيم الدرن</option>
+                </select>
+                <select id="day">
+                    <option value="">اختر اليوم</option>
+                    <option value="السبت">السبت</option>
+                    <option value="الأحد">الأحد</option>
+                    <option value="الاثنين">الاثنين</option>
+                    <option value="الثلاثاء">الثلاثاء</option>
+                    <option value="الأربعاء">الأربعاء</option>
+                    <option value="الخميس">الخميس</option>
+                </select>
+                <select id="center">
+                    <option value="">اختر المركز الطبي</option>
+                    <option value="مركز طبي أول">مركز طبي أول</option>
+                    <option value="مركز طبي 40">مركز طبي 40</option>
+                    <option value="مركز 54">مركز 54</option>
+                    <option value="مركز طبي 28">مركز طبي 28</option>
+                    <option value="مركز طبي 12">مركز طبي 12</option>
+                    <option value="مركز طبي 46">مركز طبي 46</option>
+                    <option value="مركز طبي الحي 10 ج">مركز طبي الحي 10 ج</option>
+                    <option value="مركز طبي الحي 10 أ">مركز طبي الحي 10 أ</option>
+                    <option value="مركز طبي الحي 12">مركز طبي الحي 12</option>
+                    <option value="مركز طبي الحي 16 القديم">مركز طبي الحي 16 القديم</option>
+                    <option value="مركز طبي الحي 16 الجديد">مركز طبي الحي 16 الجديد</option>
+                    <option value="الحي 15 الجديد">الحي 15 الجديد</option>
+                    <option value="الحي 15 القديم">الحي 15 القديم</option>
+                    <option value="وحدة الحي 14">وحدة الحي 14</option>
+                    <option value="مركز طبي حي 30">مركز طبي حي 30</option>
+                    <option value="مركز طبي الحي 31">مركز طبي الحي 31</option>
+                    <option value="مركز طبي الحي 11">مركز طبي الحي 11</option>
+                </select>
+                <button onclick="search()">بحث</button>
+            </div>
+            <div id="result"></div>
         </div>
-        <div id="result"></div>
+    </div>
+
+    <div id="vaccinationTable" class="tab-content">
+        <div class="search-container">
+            <select id="ageSelect">
+                <option value="">اختر عمر الطفل</option>
+                <option value="الميلاد">الميلاد</option>
+                <option value="شهرين">شهرين</option>
+                <option value="4 شهور">4 شهور</option>
+                <option value="6 شهور">6 شهور</option>
+                <option value="9 شهور">9 شهور</option>
+                <option value="12 شهر">12 شهر</option>
+                <option value="18 شهر">18 شهر</option>
+            </select>
+            <button onclick="handleSearch()">بحث</button>
+        </div>
+
+        <div id="vaccinationGrid" class="vaccination-grid"></div>
+
+        <div class="notes-section">
+            <h2>ملاحظات إضافية:</h2>
+            <ul>
+                <li>الآثار الجانبية بعد التطعيم: هي أي حدث طبي يحدث للطفل بعد التطعيم (ارتفاع درجة الحرارة - تورم - احمرار - طفح جلدي - بكاء مستمر -عند ارتفاع درجة حرارة الرضيع لا مانع من استخدام خافضات الحرارة والتي سبق أن وصفها له  الطبيب ).</li>
+                <li>يتم إعطاء كبسولة واحده من فيتامين أ كل 6 شهور، بدءاً من عمر 6 شهور وحتى عمر 54 شهور (4 سنوات ونصف).</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="missedVaccination" class="tab-content">
+        <div class="info-card">
+            <h2>متى يعتبر الطفل متخلفاً عن أخذ المطعوم؟</h2>
+            <p>يعتبر الطفل متخلفاً عن أخذ المطعوم عند مضي شهر أو أكثر عن الموعد المقرر له حسب الجدول الوطني للتطعيم دون تلقي المطعوم.</p>
+        </div>
+
+        <div class="info-card">
+            <h2>ماذا يجب أن تفعل إذا تخلفت عن موعد التطعيم؟</h2>
+            <ul>
+                <li>احرصي على مراجعة المركز الصحي في أقرب وقت في حال التخلف عن أخذ المطعوم في موعده.</li>
+                <li>سيتم إعطاء الطفل مطاعيمه حسب تعليمات وزارة الصحة للأطفال المتخلفين عن المطعوم.</li>
+                <li>سيتم جدولة التطعيمات الأساسية للأطفال اللاحقة وفقاً لذلك.</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h2>ماذا يحدث عند التخلف عن الجرعة الثانية أو الثالثة؟</h2>
+            <p>عند التخلف عن الجرعة الثانية أو الثالثة لمطعوم ما، يتم استكمال الجرعات المقررة دون الحاجة إلى إعادة الجرعات السابقة، أياً كانت المدة الزمنية الفاصلة بينهما.</p>
+        </div>
+
+        <div class="important-note">
+            <h3>ملاحظة هامة</h3>
+            <p>احرصي على إكمال كافة الجرعات المقررة لطفلك في دفتر التطعيمات الأساسية للأطفال، حيث أن الفعالية القصوى للمطاعيم ذات الجرعات المتعددة لا تتحقق سوى بأخذ الجرعات كاملة.</p>
+        </div>
+    </div>
+
+    <div id="vaccinationProhibitions" class="tab-content">
+        <h1>موانع التطعيمات الأساسية للأطفال</h1>
+        
+        <p>قد تتعارض بعض الحالات المرضية لدى الطفل مع التطعيمات الأساسية التي سيتلقاها. من المهم إخبار الطبيب عن أي أمراض أو مشاكل صحية لدى طفلك، بالإضافة إلى أية أدوية أو علاجات يتلقاها حالياً.</p>
+        
+        <h2>أنواع موانع التطعيم:</h2>
+        
+        <h3>1. موانع تتطلب تأجيل المطعوم:</h3>
+        <ul>
+            <li>الارتفاع الشديد في درجة الحرارة.</li>
+            <li>المرض الشديد.</li>
+            <li>نقل الدم أو البلازما أو الأجسام المناعية للطفل (يؤجل مطعوم الحصبة أو المطعوم الثلاثي MMR ثلاثة شهور).</li>
+            <li>العلاج بأدوية الكورتيزون (يحدد الطبيب فترة التأجيل وفقاً لجرعة الكورتيزون ومدة العلاج).</li>
+        </ul>
+        
+        <h3>2. موانع تتطلب عدم إعطاء المطعوم:</h3>
+        <ul>
+            <li>إصابة الطفل بأمراض نقص المناعة مثل الإيدز.</li>
+            <li>الإصابة بأمراض تضعف جهاز المناعة مثل السرطان.</li>
+            <li>تعاطي أدوية مثبطة للمناعة.</li>
+            <li>حدوث صدمة حساسية للمطعوم في أول مرة يؤخذ فيها.</li>
+        </ul>
+        
+        <div class="important">
+            <strong>ملاحظة هامة:</strong> يمنع إعطاء التطعيمات الأساسية الحية الموهنة في حالات ضعف المناعة.
+        </div>
     </div>
 
     <script>
         const vaccinationData = {
+            "الميلاد": [
+                { name: "رضع B كبدي", disease: "الالتهاب الكبدي الفيروسي B", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليمنى" },
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "بي.سي.جي", disease: "الدرن", dose: "0.05 سم2", method: "حقناً داخل الجلد (في الطبقة الأولى) أعلى الذراع الأيسر للطفل" }
+            ],
+            "شهرين": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "الخماسي", disease: "الدفتريا، السعال الديكي، التيتانوس، الالتهاب الكبدي الفيروسي B، الانفلونزا المستديمة النزفية B", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليمنى" },
+                { name: "سولك", disease: "شلل الأطفال", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليسرى" }
+            ],
+            "4 شهور": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "الخماسي", disease: "الدفتريا، السعال الديكي، التيتانوس، الالتهاب الكبدي الفيروسي B، الانفلونزا المستديمة النزفية B", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليمنى" },
+                { name: "سولك", disease: "شلل الأطفال", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليسرى" }
+            ],
+            "6 شهور": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "الخماسي", disease: "الدفتريا، السعال الديكي، التيتانوس، الالتهاب الكبدي الفيروسي B، الانفلونزا المستديمة النزفية B", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليمنى" },
+                { name: "سولك", disease: "شلل الأطفال", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليسرى" },
+                { name: "فيتامين أ", disease: "-", dose: "كبسولة واحدة (زرقاء)", method: "بالفم" }
+            ],
+            "9 شهور": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" }
+            ],
+            "12 شهر": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "ام.ام.ار", disease: "الحصبة والنكاف والحصبة الألمانية", dose: "0.5 سم2", method: "حقناً تحت الجلد بالذراع اليمنى" },
+                { name: "فيتامين أ", disease: "-", dose: "كبسولة واحدة (زرقاء)", method: "بالفم" }
+            ],
+            "18 شهر": [
+                { name: "سابين", disease: "شلل الأطفال", dose: "نقطتان", method: "بالفم" },
+                { name: "ام.ام.ار", disease: "الحصبة والنكاف والحصبة الألمانية", dose: "0.5 سم2", method: "حقناً تحت الجلد بالذراع اليمنى" },
+                { name: "الثلاثي البكتيري", disease: "الدفتريا والتيتانوس والسعال الديكي", dose: "0.5 سم2", method: "حقناً بالعضل في الجزء الخارجي من العضلة الأمامية بالفخذ اليسرى" },
+                { name: "فيتامين أ", disease: "-", dose: "كبسولة واحدة (زرقاء)", method: "بالفم" }
+            ]
+        };
+
+        function handleSearch() {
+            const selectedAge = document.getElementById('ageSelect').value;
+            const vaccinationGrid = document.getElementById('vaccinationGrid');
+            vaccinationGrid.innerHTML = '';
+
+            if (selectedAge && vaccinationData[selectedAge]) {
+                vaccinationData[selectedAge].forEach(vaccine => {
+                    const card = document.createElement('div');
+                    card.className = 'vaccine-card';
+                    card.innerHTML = `
+                        <h3>${vaccine.name}</h3>
+                        <p><strong>المرض:</strong> ${vaccine.disease}</p>
+                        <p><strong>الجرعة:</strong> ${vaccine.dose}</p>
+                        <p><strong>طريقة الإعطاء:</strong> ${vaccine.method}</p>
+                    `;
+                    vaccinationGrid.appendChild(card);
+                });
+            } else if (selectedAge) {
+                vaccinationGrid.innerHTML = '<p style="text-align: center;">لا توجد تطعيمات لهذا العمر</p>';
+            }
+        }
+
+        const vaccinationCentersData = {
             "مركز طبي أول": {
                 "0-9": ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء"],
                 "12-18": ["الأحد", "الاثنين", "الأربعاء"],
@@ -131,7 +395,7 @@
             "مركز 54": {
                 "0-9": ["الاثنين", "الثلاثاء", "الأربعاء"],
                 "12-18": ["الاثنين", "الثلاثاء"],
-                "TB": ["الثلاثاء "],
+                "TB": ["الثلاثاء"],
                 "location": "https://maps.app.goo.gl/xp6dLtuEPkFkwKUi8?g_st=ac"
             },
             "مركز طبي 28": {
@@ -147,7 +411,7 @@
                 "location": "https://maps.app.goo.gl/2aogmuy7mVpMNcVy7?g_st=ac"
             },
             "مركز طبي 46": {
-                "0-9": ["الأحد", "الاثنين"],
+                "0-9": ["الأحد", "الاثنين", "الثلاثاء"],
                 "12-18": ["الأحد", "الاثنين"],
                 //"TB": ["الثلاثاء الثاني والرابع في الشهر"],
                 "location": "https://maps.app.goo.gl/U2Q7gBpXjHmHrBoV7?g_st=ac"
@@ -159,8 +423,8 @@
                 "location": "https://maps.app.goo.gl/RuGcb83oehcFtGEP6?g_st=ac"
             },
             "مركز طبي الحي 10 أ": {
-                "0-9": ["الأحد الاول والثالث من الشهر"],
-                "12-18": ["الأحد الاول والثالث من الشهر"],
+                "0-9": ["الأحد"],
+                //"12-18": ["الأحد"],
                 "location": "https://maps.app.goo.gl/GaSU1m3kauorS7Ht8?g_st=ac"
             },
             "مركز طبي الحي 12": {
@@ -200,7 +464,7 @@
             "مركز طبي حي 30": {
                 "0-9": ["السبت"],
                 "12-18": ["السبت"],
-                "location": "https://maps.app.goo.gl/2mueuc8R4WjJa9em8?g_st=ac"
+                "location": "https://maps.app.goo.gl/t2Cwj7MZJy1LBXqQA?g_st=ac"
             },
             "مركز طبي الحي 31": {
                 "0-9": ["الثلاثاء"],
@@ -208,8 +472,8 @@
                 "location": "https://maps.app.goo.gl/xkDEdCpJdr1a9pcd7?g_st=ac"
             },
             "مركز طبي الحي 11": {
-                "0-9": ["الخميس الاول والثالث من الشهر "],
-                "12-18": ["الخميس الاول والثالث من الشهر"],
+                "0-9": ["الخميس"],
+                "12-18": ["الخميس"],
                 //"TB": ["الخميس الثاني في الشهر"],
                 "location": "https://maps.app.goo.gl/SQhZWY7WUjFqdN1W9?g_st=ac"
             }
@@ -226,19 +490,19 @@
             } else {
                 let results = [];
 
-                for (let c in vaccinationData) {
+                for (let c in vaccinationCentersData) {
                     if (center && c !== center) continue;
                     
-                    for (let ag in vaccinationData[c]) {
+                    for (let ag in vaccinationCentersData[c]) {
                         if (ag === 'location') continue;
                         if (ageGroup && ag !== ageGroup) continue;
                         
-                        if (!day || vaccinationData[c][ag].includes(day)) {
+                        if (!day || vaccinationCentersData[c][ag].includes(day)) {
                             results.push({
                                 center: c,
                                 ageGroup: ag,
-                                days: day ? [day] : vaccinationData[c][ag],
-                                location: vaccinationData[c].location
+                                days: day ? [day] : vaccinationCentersData[c][ag],
+                                location: vaccinationCentersData[c].location
                             });
                         }
                     }
@@ -257,8 +521,42 @@
 
             document.getElementById('result').innerHTML = resultHTML;
         }
+
+        function resetSelections() {
+            document.getElementById('ageSelect').selectedIndex = 0;
+            document.getElementById('ageGroup').selectedIndex = 0;
+            document.getElementById('day').selectedIndex = 0;
+            document.getElementById('center').selectedIndex = 0;
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            // Reset search results and selections
+            if (tabName === 'vaccinationTable') {
+                document.getElementById('vaccinationGrid').innerHTML = '';
+                resetSelections();
+            } else if (tabName === 'vaccinationCenters') {
+                document.getElementById('result').innerHTML = '';
+                resetSelections();
+            }
+        }
+
+        // Set default tab
+        document.getElementById("vaccinationCenters").style.display = "block";
+        document.getElementsByClassName("tab-button")[0].className += " active";
     </script>
-    <script data-goatcounter="https://abdoalwan11.goatcounter.com/count"
+     <script data-goatcounter="https://abdoalwan11.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
-    </html>
+</html>
